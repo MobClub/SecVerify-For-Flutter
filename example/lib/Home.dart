@@ -4,11 +4,11 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:secverify/secverify.dart';
-import 'package:secverify/secverify_UIConfig.dart';
+import 'package:secverify_plugin/secverify.dart';
+import 'package:secverify_plugin/secverify_UIConfig.dart';
 
 class Home extends StatefulWidget {
-  const Home({Key key}): super(key: key);
+  const Home({Key? key}): super(key: key);
 
   @override
   _HomeState createState() {
@@ -19,7 +19,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   // Properties
   bool _isSupport = false;
-  Map<String, String> _mobileAuthToken;
+  late Map<String, String> _mobileAuthToken;
 
   @override
   void initState() {
@@ -27,7 +27,7 @@ class _HomeState extends State<Home> {
     //隐私协议
     _submitPrivacyStatus(true);
 
-    Secverify.preVerify(result: (Map ret, Map err) {
+    Secverify.preVerify(result: (Map? ret, Map? err) {
       if (err != null) {
         print('InitState PreVerify Failed: ${err.toString()}');
       }
@@ -48,8 +48,8 @@ class _HomeState extends State<Home> {
   Widget getItemContainer(GridViewWidget item) {
     return Container(
       alignment: Alignment.center,
-      child: FlatButton(
-        child: new Text(item.itemName ?? ''),
+      child: TextButton(
+        child: new Text(item.itemName),
         onPressed: () {
           GridViewWidgetMethodType type = item.type;
           switch (type) {
@@ -70,7 +70,7 @@ class _HomeState extends State<Home> {
               break;
             case GridViewWidgetMethodType.manualVerify: {
               SecVerifyUIConfig config = _configAndroidUIConfig();
-              config.iOSConfig.manualDismiss = true;
+              config.iOSConfig?.manualDismiss = true;
               if (Platform.isIOS){
                 _verify(config: config);
               } else if (Platform.isAndroid){
@@ -90,7 +90,7 @@ class _HomeState extends State<Home> {
             break;
           }
         },
-        color: Colors.white,
+        // color: Colors.white,
       ),
       color: Colors.white,
     );
@@ -117,15 +117,15 @@ class _HomeState extends State<Home> {
 
   /// Private Methods
   Future<void> _secVerifySupport() async {
-    _isSupport = await Secverify.isVerifySupport;
+    _isSupport = (await Secverify.isVerifySupport)!;
   }
 
   void _submitPrivacyStatus(bool grantResult){
-    Secverify.submitPrivacyGrantResult(grantResult);
+    Secverify.submitPrivacyGrantResult(grantResult, null);
   }
 
   void _preVerify(BuildContext context) {
-    Secverify.preVerify(result: (Map ret, Map err) {
+    Secverify.preVerify(result: (Map? ret, Map? err) {
       if (ret != null && err == null) {
         // 显示预取号信息
         String retDetail = ret.toString();
@@ -149,7 +149,7 @@ class _HomeState extends State<Home> {
   }
 
   void _mobileAuth(BuildContext context) {
-    Secverify.mobileAuthToken(timeout: 5.0, result: (Map ret, Map err) {
+    Secverify.mobileAuthToken(timeout: 5.0, result: (Map? ret, Map? err) {
       if (ret != null && err == null) {
         // 显示本机认证Token信息
         String retDetail = ret.toString();
@@ -174,69 +174,71 @@ class _HomeState extends State<Home> {
     });
   }
 
-  void _verify({@required SecVerifyUIConfig config, BuildContext context}) {
-    Secverify.verify(config, openAuthListener: (Map ret, Map err) {
-      // 拉起授权页面结果回调
-      if (err != null) {
-        // 拉起授权页面失败
-        _showAlert(err.toString());
-      } else {
-        print('Open Auth Page Result: ${ret.toString()}');
-      }
-    }, cancelAuthPageListener: (Map ret, Map err) {
-      // 手动关闭或取消授权结果回调
-      if (err != null) {
-        _showAlert(err.toString());
-      }
-    }, oneKeyLoginListener: (Map ret, Map err) {
-      if (config.iOSConfig.manualDismiss) {
-        Secverify.manualDismissLoading();
-        Secverify.manualDismissLoginVC(flag: true).then((value) {
-          print('Manual Dismiss Loading VC Success');
-        });
-      }
-
-      // 登录验证结果回调
-      if (ret != null && err == null) {
-        String resultStr = ret.toString();
-        if (resultStr.length != 0
-            && resultStr.contains('token')
-            && resultStr.contains('opToken')
-            && resultStr.contains('operator')) {
-          // 结果检验成功，进行网络请求
-          _doLoginWith(ret);
-        } else {
-          _showAlert('登录验证失败 $resultStr');
-        }
-      } else if (err != null) {
-        _showAlert(err.toString());
-      } else {
-        _showAlert('登录验证失败');
-      }
-    }, customEventListener: (Map ret, Map err) {
-      // 自定义控件点击事件结果回调
-    },androidEventListener:(Map ret, Map err){
-      if (ret != null && err == null) {
-        String resultStr = ret['ret'].toString();
-        if (resultStr.length != 0) {
-          if (resultStr.contains('onOtherLogin')) {
-            _showAlert('其他方式登陆');
-          } else if (resultStr.contains('onUserCanceled')) {
-            _showAlert('用户取消登陆');
-          } else {
-            if (resultStr.contains('token')
-                && resultStr.contains('opToken')
-                && resultStr.contains('operator')) {
-              _doLoginWith(ret['ret']);
-            }
-          }
-        }
-      } else {
-        if (err != null){
-          _showAlert('取号失败 ${err['err'].toString()}');
-        }
-      }
-    });
+  void _verify({required SecVerifyUIConfig config}) {
+    Secverify.verify(config,
+            (rt, err) {
+              if (err != null) {
+                // 拉起授权页面失败
+                _showAlert(err.toString());
+              } else {
+                print('Open Auth Page Result: ${rt.toString()}');
+              }
+            },
+            (rt, err) {
+              if (err != null) {
+                _showAlert(err.toString());
+              }
+            },
+            (rt, err) {
+              if ((config.iOSConfig!.manualDismiss)) {
+                Secverify.manualDismissLoading();
+                Secverify.manualDismissLoginVC(flag: true).then((value) {
+                  print('Manual Dismiss Loading VC Success');
+                });
+              }
+              // 登录验证结果回调
+              if (rt != null && err == null) {
+                String resultStr = rt.toString();
+                if (resultStr.length != 0
+                    && resultStr.contains('token')
+                    && resultStr.contains('opToken')
+                    && resultStr.contains('operator')) {
+                  // 结果检验成功，进行网络请求
+                  _doLoginWith(rt);
+                } else {
+                  _showAlert('登录验证失败 $resultStr');
+                }
+              } else if (err != null) {
+                _showAlert(err.toString());
+              } else {
+                _showAlert('登录验证失败');
+              }
+            },
+            (rt, err) {
+              // 自定义控件点击事件结果回调
+            },
+            (rt, err) {
+              if (rt != null && err == null) {
+                String resultStr = rt['ret'].toString();
+                if (resultStr.length != 0) {
+                  if (resultStr.contains('onOtherLogin')) {
+                    _showAlert('其他方式登录');
+                  } else if (resultStr.contains('onUserCanceled')) {
+                    _showAlert('用户取消登录');
+                  } else {
+                    if (resultStr.contains('token')
+                        && resultStr.contains('opToken')
+                        && resultStr.contains('operator')) {
+                      _doLoginWith(rt['ret']);
+                    }
+                  }
+                }
+              } else {
+                if (err != null){
+                  _showAlert('取号失败 ${err['err'].toString()}');
+                }
+              }
+            });
   }
 
   void _mobileVerify(String phoneNum, BuildContext context) {
@@ -249,7 +251,7 @@ class _HomeState extends State<Home> {
       _showAlert('进行本机认证操作前，请先请求Token');
       return;
     }
-    Secverify.mobileVerify(phoneNum: phoneNum, tokenInfo: _mobileAuthToken, result: (Map ret, Map err) {
+    Secverify.mobileVerify(phoneNum: phoneNum, tokenInfo: _mobileAuthToken, result: (Map? ret, Map? err) {
       // 本机认证结果处理
           if (ret != null && err == null) {
             String resultStr = ret.toString();
@@ -275,33 +277,33 @@ class _HomeState extends State<Home> {
   }
   SecVerifyUIConfig _configAndroidUIConfig() {
     SecVerifyUIConfig config = SecVerifyUIConfig();
-    // _customizeAndroidUiExample(config);
+     _customizeAndroidUiExample(config);
     return config;
   }
 
   void _customizeAndroidUiExample(SecVerifyUIConfig config){
     //portrait
 //标题栏
-    config.androidPortraitConfig.navColorIdName="teal_200";//this color resource should put in the colors.xml in android project
-    config.androidPortraitConfig.navTextIdName="one_key_login";//this string  should put in the strings.xml in android project
-    config.androidPortraitConfig.navTextColorIdName="white";
-    config.androidPortraitConfig.navHidden = false;
-    config.androidPortraitConfig.navTransparent = true;//默认是true
-    config.androidPortraitConfig.navCloseImgHidden = false;
-    config.androidPortraitConfig.navTextSize = 15;
-    config.androidPortraitConfig.navCloseImgPath='close.png';//this image should put in the assets package in android project
+    config.androidPortraitConfig?.navColorIdName="teal_200";//this color resource should put in the colors.xml in android project
+    config.androidPortraitConfig?.navTextIdName="one_key_login";//this string  should put in the strings.xml in android project
+    config.androidPortraitConfig?.navTextColorIdName="white";
+    config.androidPortraitConfig?.navHidden = false;
+    config.androidPortraitConfig?.navTransparent = true;//默认是true
+    config.androidPortraitConfig?.navCloseImgHidden = false;
+    config.androidPortraitConfig?.navTextSize = 15;
+    config.androidPortraitConfig?.navCloseImgPath='close.png';//this image should put in the assets package in android project
     // config.androidPortraitConfig.navCloseImgWidth=15;
     // config.androidPortraitConfig.navCloseImgHeight=15;//标题栏的高度是自适应这个图片的高度的
     // config.androidPortraitConfig.navCloseImgOffsetX=10;
     // config.androidPortraitConfig.navCloseImgOffsetRightX=10;
     // config.androidPortraitConfig.navCloseImgOffsetY=10;
-    config.androidPortraitConfig.navTextBold=false;
+    config.androidPortraitConfig?.navTextBold=false;
     // config.androidPortraitConfig.navCloseImgScaleType=ImageScaleType.CENTER_CROP;
 
 //号码上方logo
-    config.androidPortraitConfig.logoImgPath = 'logo.png';
-    config.androidPortraitConfig.logoWidth = 80;
-    config.androidPortraitConfig.logoHeight = 80;
+    config.androidPortraitConfig?.logoImgPath = 'logo.png';
+    config.androidPortraitConfig?.logoWidth = 80;
+    config.androidPortraitConfig?.logoHeight = 80;
     // config.androidPortraitConfig.logoOffsetX = 20;
     // config.androidPortraitConfig.logoOffsetY = 60;
     // config.androidPortraitConfig.logoOffsetBottomY = 20;
@@ -309,8 +311,8 @@ class _HomeState extends State<Home> {
     // config.androidPortraitConfig.logoAlignParentRight = true;
     // config.androidPortraitConfig.logoHidden = false;
 //手机号码
-    config.androidPortraitConfig.numberColorIdName = 'teal_200';
-    config.androidPortraitConfig.numberSize = 20;
+    config.androidPortraitConfig?.numberColorIdName = 'teal_200';
+    config.androidPortraitConfig?.numberSize = 20;
     // config.androidPortraitConfig.numberOffsetX = 20;
     // config.androidPortraitConfig.numberOffsetY = 20;
     // config.androidPortraitConfig.numberOffsetBottomY = 20;
@@ -318,28 +320,28 @@ class _HomeState extends State<Home> {
     // config.androidPortraitConfig.numberAlignParentRight = true;
     // config.androidPortraitConfig.numberOffsetX = 20;//seems like margin left
     // config.androidPortraitConfig.numberHidden = true;
-    config.androidPortraitConfig.numberBold = false;
+    config.androidPortraitConfig?.numberBold = false;
 //切换账号
-    config.androidPortraitConfig.switchAccColorIdName='teal_700';//textColor
-    config.androidPortraitConfig.switchAccTextSize=13;
-    config.androidPortraitConfig.switchAccHidden=false;
+    config.androidPortraitConfig?.switchAccColorIdName='teal_700';//textColor
+    config.androidPortraitConfig?.switchAccTextSize=13;
+    config.androidPortraitConfig?.switchAccHidden=false;
     // config.androidPortraitConfig.switchAccOffsetX=20;//控件位于屏幕最左侧 + marginleft值
     // config.androidPortraitConfig.switchAccOffsetY=20;//控件位于屏幕最上侧 + marginTop值
     // config.androidPortraitConfig.switchAccOffsetBottomY=20;//控件位于屏幕最下侧 + marginBottom值
     // config.androidPortraitConfig.switchAccOffsetRightX=20;//控件位于屏幕最右侧 + marginRight值
     // config.androidPortraitConfig.switchAccAlignParentRight=true;//控件是否位于屏幕最右侧
-    config.androidPortraitConfig.switchAccText='切换手机账号';
+    config.androidPortraitConfig?.switchAccText='切换手机账号';
     // config.androidPortraitConfig.switchAccTextBold=true;//Bold
 
 //登录按钮
-    config.androidPortraitConfig.loginBtnImgIdName="btn_bg";//this drawable resource should put in the drawable package in android project
+    config.androidPortraitConfig?.loginBtnImgIdName="btn_bg";//this drawable resource should put in the drawable package in android project
 //     config.androidPortraitConfig.loginImgPressedName="#FF6200EE";//loginImgPressedName和loginImgPressedName同时设置才会生效
 //     config.androidPortraitConfig.loginImgPressedName="#FF000000";//loginImgPressedName和loginImgPressedName同时设置才会生效
     // config.androidPortraitConfig.loginBtnTextIdName="one_key_login";//receive an id,not a String
-    config.androidPortraitConfig.loginBtnTextColorIdName="teal_200";//receive a string,not an id
-    config.androidPortraitConfig.loginBtnTextSize=15;
-    config.androidPortraitConfig.loginBtnWidth=300;
-    config.androidPortraitConfig.loginBtnHeight=40;
+    config.androidPortraitConfig?.loginBtnTextColorIdName="teal_200";//receive a string,not an id
+    config.androidPortraitConfig?.loginBtnTextSize=15;
+    config.androidPortraitConfig?.loginBtnWidth=300;
+    config.androidPortraitConfig?.loginBtnHeight=40;
     // config.androidPortraitConfig.loginBtnOffsetX=4;
     // config.androidPortraitConfig.loginBtnOffsetY=4;
     // config.androidPortraitConfig.loginBtnOffsetBottomY=4;
@@ -347,7 +349,7 @@ class _HomeState extends State<Home> {
     // config.androidPortraitConfig.loginBtnAlignParentRight=true;
     // config.androidPortraitConfig.loginBtnHidden=true;
     // config.androidPortraitConfig.loginBtnTextBold=true;
-    config.androidPortraitConfig.loginBtnTextStringName='一键登录';
+    config.androidPortraitConfig?.loginBtnTextStringName='一键登录';
 
 //复选框
     // config.androidPortraitConfig.checkboxDefaultState=true;
@@ -392,7 +394,7 @@ class _HomeState extends State<Home> {
     // config.androidPortraitConfig.agreementUncheckHintText='uncheck_tip';
 
 //服务协议页面内容自定义
-    config.androidPortraitConfig.agreementPageTitleString='服务与隐私协议';//有缓存可能需要重装应用
+    config.androidPortraitConfig?.agreementPageTitleString='服务与隐私协议';//有缓存可能需要重装应用
     // config.androidPortraitConfig.cusAgreementPageOneTitleString='测试标题一';
     // config.androidPortraitConfig.cusAgreementPageTwoTitleString='测试标题二';//第二个隐私协议页面标题
     // config.androidPortraitConfig.cusAgreementPageThreeTitleString='测试标题三';//第三个隐私协议页面标题
@@ -403,8 +405,8 @@ class _HomeState extends State<Home> {
     // config.androidPortraitConfig.agreementPageCloseImgHidden=true;//设置一键登录的标题栏的
     // config.androidPortraitConfig.agreementPageCloseImgWidth=15;//返回图标宽度
     // config.androidPortraitConfig.agreementPageCloseImgHeight=15;//返回图标高度
-    config.androidPortraitConfig.agreementPageTitleTextSize=15;//标题字体大小
-    config.androidPortraitConfig.agreementPageTitleTextColor='#FFBB86FC';//rgb
+    config.androidPortraitConfig?.agreementPageTitleTextSize=15;//标题字体大小
+    config.androidPortraitConfig?.agreementPageTitleTextColor='#FFBB86FC';//rgb
     // config.androidPortraitConfig.agreementPageTitleTextBold=true;
     // config.androidPortraitConfig.agreementPageTitleHidden=true;
 
@@ -412,30 +414,30 @@ class _HomeState extends State<Home> {
     //config.androidPortraitConfig.sloganOffsetX=20;//左偏移
     //config.androidPortraitConfig.sloganOffsetY=20;
     //config.androidPortraitConfig.sloganOffsetBottomY=20;
-    config.androidPortraitConfig.sloganTextSize=10;
-    config.androidPortraitConfig.sloganTextColor='purple_200';
+    config.androidPortraitConfig?.sloganTextSize=10;
+    config.androidPortraitConfig?.sloganTextColor='purple_200';
     // config.androidPortraitConfig.sloganOffsetRightX=20;//右偏移
-    config.androidPortraitConfig.sloganAlignParentRight=false;//右
-    config.androidPortraitConfig.sloganHidden=false;
-    config.androidPortraitConfig.sloganTextBold=false;//加粗
+    config.androidPortraitConfig?.sloganAlignParentRight=false;//右
+    config.androidPortraitConfig?.sloganHidden=false;
+    config.androidPortraitConfig?.sloganTextBold=false;//加粗
 
 //弹框模式
-    config.androidPortraitConfig.dialogTheme=false;//一键登录页面是否采用弹框模式
-    config.androidPortraitConfig.dialogAlignBottom=false;
+    config.androidPortraitConfig?.dialogTheme=false;//一键登录页面是否采用弹框模式
+    config.androidPortraitConfig?.dialogAlignBottom=false;
     // config.androidPortraitConfig.dialogOffsetX=200;//对dialogAlignBottom=falses时生效
     // config.androidPortraitConfig.dialogOffsetY=200;//对dialogAlignBottom=falses时生效
     // config.androidPortraitConfig.dialogWidth=300;//对dialogAlignBottom=falses时生效
     // config.androidPortraitConfig.dialogHeight=300;//对dialogAlignBottom=falses时生效
-    config.androidPortraitConfig.dialogBackground='bg.png';//弹框弹出后的背景板
-    config.androidPortraitConfig.dialogBackgroundClickClose=false;//弹框弹出后的背景板
+    config.androidPortraitConfig?.dialogBackground='bg.png';//弹框弹出后的背景板
+    config.androidPortraitConfig?.dialogBackgroundClickClose=false;//弹框弹出后的背景板
 
 
 //大背景
-    config.androidPortraitConfig.backgroundImgPath='bg_my.png';
+    config.androidPortraitConfig?.backgroundImgPath='bg_my.png';
     // config.androidPortraitConfig.fullScreen=true;
 
 //自定义控件 新增一个textview
-    var list0 = new List<AndroidCustomView>();
+
     AndroidCustomView customView = new AndroidCustomView();
     customView.viewClass='TextView';
     customView.viewText='自定义控件';
@@ -450,7 +452,7 @@ class _HomeState extends State<Home> {
     // customView.viewOffsetBottomY=20;
     customView.viewWidth=50;
     customView.viewHeight=20;
-    list0.add(customView);
+    var list0 = [customView];
 
     Map<String,List<AndroidCustomView>> customViewMap = new Map();
     customViewMap['customView'] = list0;
@@ -460,26 +462,26 @@ class _HomeState extends State<Home> {
 
   SecVerifyUIConfig _configIOSUIConfig() {
     SecVerifyUIConfig config = SecVerifyUIConfig();
-    config.iOSConfig.manualDismiss = false;
+    config.iOSConfig?.manualDismiss = false;
 
-    config.iOSConfig.navBarHidden = true;
-    config.iOSConfig.prefersStatusBarHidden = false;
+    config.iOSConfig?.navBarHidden = true;
+    config.iOSConfig?.prefersStatusBarHidden = false;
 
-    config.iOSConfig.shouldAutorotate = true;
-    config.iOSConfig.supportedInterfaceOrientations = iOSInterfaceOrientationMask.all;
-    config.iOSConfig.preferredInterfaceOrientationForPresentation = iOSInterfaceOrientation.portrait;
+    config.iOSConfig?.shouldAutorotate = true;
+    config.iOSConfig?.supportedInterfaceOrientations = iOSInterfaceOrientationMask.all;
+    config.iOSConfig?.preferredInterfaceOrientationForPresentation = iOSInterfaceOrientation.portrait;
 
     return config;
   }
 
-  void _showAlert([String text, bool isError = false]) {
+  void _showAlert(String text, {bool isError = false}) {
     showDialog(
         context: context,
         builder: (BuildContext context) => AlertDialog(
           title: new Text('提示'),
           content: new Text(text),
           actions: <Widget>[
-            new FlatButton(
+            new TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -504,10 +506,10 @@ class _HomeState extends State<Home> {
             textInputAction: TextInputAction.done,
             autofocus: true,
             maxLength: 11,
-            maxLengthEnforced: true,
+            maxLengthEnforcement: MaxLengthEnforcement.enforced,
           ),
           actions: <Widget>[
-            new FlatButton(
+            new TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                   final _phoneNum = _textEditVC.text;
@@ -519,7 +521,7 @@ class _HomeState extends State<Home> {
                 },
                 child: new Text('OK')
             ),
-            new FlatButton(
+            new TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -554,10 +556,10 @@ enum GridViewWidgetMethodType {
 
 class GridViewWidget {
   // Properties
-  String itemName;
-  GridViewWidgetMethodType type;
+  late String itemName;
+  late GridViewWidgetMethodType type;
 
-  GridViewWidget([GridViewWidgetMethodType type, String name]) {
+  GridViewWidget(GridViewWidgetMethodType type, String name) {
     this.type = type;
     this.itemName = name;
   }

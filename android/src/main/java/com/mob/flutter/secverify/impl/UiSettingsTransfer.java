@@ -1,4 +1,4 @@
-package com.mob.secverifyplugin;
+package com.mob.flutter.secverify.impl;
 
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -28,8 +28,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
-import static com.mob.secverifyplugin.CommonUtil.createBitmap;
-import static com.mob.secverifyplugin.CommonUtil.dipToPx;
+import static com.mob.flutter.secverify.impl.CommonUtil.createBitmap;
+import static com.mob.flutter.secverify.impl.CommonUtil.dipToPx;
 import static com.mob.tools.utils.ResHelper.pxToDip;
 
 public class UiSettingsTransfer {

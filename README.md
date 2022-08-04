@@ -43,17 +43,17 @@ MobSDK {
    SecVerify {}
 }
 ```
-3. 在根路径下的pubspec.yaml文件中添加smssdk flutter插件：
+3. 在根路径下的pubspec.yaml文件中添加secverify flutter插件：
 
 ```
 dependencies:
-  secverify:^1.0.2
+  secverify_plugin:^1.30.7
 ```
 
 在你项目的Dart中添加以下代码：
 
 ```
- import 'package:secverify/secverify.dart'
+ import 'package:secverify_plugin/secverify.dart'
 ```
 这样，就可以使用plugin中定义的dart api了。
 
@@ -69,7 +69,7 @@ android {
 }
 ```
 
-这样就可以在你的`project/android/src`下的类中`import cn.mob.secverifyplugin`并使用`SecverifyPlugin`中的api了。
+这样就可以在你的`project/android/src`下的类中`import com.mob.flutter.secverify.SecverifyPlugin`并使用`SecverifyPlugin`中的api了。
 
 ######添加代码
 1. 在MainActivity的onCreate中添加以下代码：

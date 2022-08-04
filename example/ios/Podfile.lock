@@ -1,18 +1,15 @@
 PODS:
-  - e2e (0.0.1):
-    - Flutter
   - Flutter (1.0.0)
-  - mob_secverify (3.0.3):
+  - mob_secverify (3.1.6):
     - MOBFoundation
-  - MOBFoundation (3.2.24)
-  - secverify (1.0.0):
+  - MOBFoundation (3.2.36)
+  - secverify_plugin (1.0.0):
     - Flutter
     - mob_secverify
 
 DEPENDENCIES:
-  - e2e (from `.symlinks/plugins/e2e/ios`)
   - Flutter (from `Flutter`)
-  - secverify (from `.symlinks/plugins/secverify/ios`)
+  - secverify_plugin (from `.symlinks/plugins/secverify_plugin/ios`)
 
 SPEC REPOS:
   trunk:
@@ -20,20 +17,17 @@ SPEC REPOS:
     - MOBFoundation
 
 EXTERNAL SOURCES:
-  e2e:
-    :path: ".symlinks/plugins/e2e/ios"
   Flutter:
     :path: Flutter
-  secverify:
-    :path: ".symlinks/plugins/secverify/ios"
+  secverify_plugin:
+    :path: ".symlinks/plugins/secverify_plugin/ios"
 
 SPEC CHECKSUMS:
-  e2e: 967b9b1fc533b7636a3b7a719f840c27f301fe1f
-  Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
-  mob_secverify: 08a42250544a6bbb6cab5e78504494aa0b40200c
-  MOBFoundation: 934ee1a43aed452d51942b416bc3dc4d0813ac82
-  secverify: f4bc7284766a8804646c377e61f37252964842dd
+  Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
+  mob_secverify: 73281f70cce0164615b941f6d6e9da72ba715ba2
+  MOBFoundation: 78ad4264f436b3d147375ab7fdb8088b9e22ca5d
+  secverify_plugin: a885a135c205dfd2aac8c1632cfa45defadab4a2
 
-PODFILE CHECKSUM: f32fb4e7c14f8b3ca19a369d7be425dd9241af27
+PODFILE CHECKSUM: 8e679eca47255a8ca8067c4c67aab20e64cb974d
 
-COCOAPODS: 1.9.3
+COCOAPODS: 1.11.2

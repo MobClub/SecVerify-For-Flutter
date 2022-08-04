@@ -1,4 +1,4 @@
-package com.mob.secverifyplugin;
+package com.mob.flutter.secverify;
 
 import android.content.Context;
 import android.os.Handler;
@@ -7,6 +7,7 @@ import android.os.Looper;
 import androidx.annotation.NonNull;
 
 import com.mob.MobSDK;
+import com.mob.commons.SECVERIFY;
 import com.mob.mobverify.MobVerify;
 import com.mob.secverify.OAuthPageEventCallback;
 import com.mob.secverify.OperationCallback;
@@ -18,10 +19,13 @@ import com.mob.secverify.datatype.UiSettings;
 import com.mob.secverify.datatype.VerifyResult;
 import com.mob.secverify.ui.component.CommonProgressDialog;
 import com.mob.tools.utils.DeviceHelper;
-import com.mob.tools.utils.Hashon;
+import com.mob.flutter.secverify.impl.LandUiSettingsTransfer;
+import com.mob.flutter.secverify.impl.UiSettingsTransfer;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.lang.IllegalStateException;
+
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.BinaryMessenger;
@@ -42,6 +46,10 @@ public class SecverifyPlugin implements FlutterPlugin,MethodCallHandler, EventCh
 	private MethodChannel methodChannel;
 	private EventChannel eventChannel;
 	private EventChannel.EventSink eventSink;
+
+	public SecverifyPlugin(){
+		MobSDK.setChannel(new SECVERIFY(), MobSDK.CHANNEL_FLUTTER);
+	}
 
 
 	/**
@@ -121,25 +129,29 @@ public class SecverifyPlugin implements FlutterPlugin,MethodCallHandler, EventCh
 	}
 
 	private void getToken(MethodCall call, final Result result){
-			MobVerify.getToken(new com.mob.mobverify.OperationCallback<com.mob.mobverify.datatype.VerifyResult>() {
-				@Override
-				public void onComplete(com.mob.mobverify.datatype.VerifyResult verifyResult) {
-					if (verifyResult != null){
-						HashMap<String, Object> map = new HashMap<String, Object>();
-						map.put("token",verifyResult.getToken());
-						map.put("operator",verifyResult.getOperator());
-						map.put("opToken",verifyResult.getOpToken());
-						final Map<String, Object> retMap = new HashMap<>();
-						retMap.put("ret", map);
+		MobVerify.getToken(new com.mob.mobverify.OperationCallback<com.mob.mobverify.datatype.VerifyResult>() {
+			@Override
+			public void onComplete(com.mob.mobverify.datatype.VerifyResult verifyResult) {
+				if (verifyResult != null){
+					HashMap<String, Object> map = new HashMap<String, Object>();
+					map.put("token",verifyResult.getToken());
+					map.put("operator",verifyResult.getOperator());
+					map.put("opToken",verifyResult.getOpToken());
+					final Map<String, Object> retMap = new HashMap<>();
+					retMap.put("ret", map);
+					try {
 						eventSink.success(retMap);
+					}catch (IllegalStateException e) {
+
 					}
 				}
+			}
 
-				@Override
-				public void onFailure(final com.mob.mobverify.exception.VerifyException e) {
-					onFailForMobileAuth(result, e);
-				}
-			});
+			@Override
+			public void onFailure(final com.mob.mobverify.exception.VerifyException e) {
+				onFailForMobileAuth(result, e);
+			}
+		});
 
 	}
 
@@ -152,7 +164,11 @@ public class SecverifyPlugin implements FlutterPlugin,MethodCallHandler, EventCh
 
 	private void isVerifySupport(Result result) {
 		Boolean isSupport = SecVerify.isVerifySupport();
-		result.success(isSupport);
+		try {
+			result.success(isSupport);
+		}catch (IllegalStateException e) {
+
+		}
 	}
 
 	private void setPortraitUiSettings(MethodCall call, Result result) {
@@ -203,7 +219,11 @@ public class SecverifyPlugin implements FlutterPlugin,MethodCallHandler, EventCh
 						new Handler(Looper.getMainLooper()).post(new Runnable() {
 							@Override
 							public void run() {
-								eventSink.success(map);
+								try {
+									eventSink.success(map);
+								}catch (IllegalStateException e) {
+
+								}
 							}
 						});
 					}
@@ -216,7 +236,11 @@ public class SecverifyPlugin implements FlutterPlugin,MethodCallHandler, EventCh
 						new Handler(Looper.getMainLooper()).post(new Runnable() {
 							@Override
 							public void run() {
-								eventSink.success(map);
+								try {
+									eventSink.success(map);
+								}catch (IllegalStateException e) {
+
+								}
 							}
 						});
 					}
@@ -229,7 +253,11 @@ public class SecverifyPlugin implements FlutterPlugin,MethodCallHandler, EventCh
 						new Handler(Looper.getMainLooper()).post(new Runnable() {
 							@Override
 							public void run() {
-								eventSink.success(map);
+								try {
+									eventSink.success(map);
+								}catch (IllegalStateException e) {
+
+								}
 							}
 						});
 					}
@@ -243,7 +271,11 @@ public class SecverifyPlugin implements FlutterPlugin,MethodCallHandler, EventCh
 							@Override
 							public void run() {
 								//将封装好的数据通过result传会给flutter
-								eventSink.success(map);
+								try {
+									eventSink.success(map);
+								}catch (IllegalStateException e) {
+
+								}
 							}
 						});
 					}
@@ -256,7 +288,11 @@ public class SecverifyPlugin implements FlutterPlugin,MethodCallHandler, EventCh
 						new Handler(Looper.getMainLooper()).post(new Runnable() {
 							@Override
 							public void run() {
-								eventSink.success(map);
+								try {
+									eventSink.success(map);
+								}catch (IllegalStateException e) {
+
+								}
 							}
 						});
 					}
@@ -269,7 +305,11 @@ public class SecverifyPlugin implements FlutterPlugin,MethodCallHandler, EventCh
 						new Handler(Looper.getMainLooper()).post(new Runnable() {
 							@Override
 							public void run() {
-								eventSink.success(map);
+								try {
+									eventSink.success(map);
+								}catch (IllegalStateException e) {
+
+								}
 							}
 						});
 					}
@@ -282,7 +322,11 @@ public class SecverifyPlugin implements FlutterPlugin,MethodCallHandler, EventCh
 						new Handler(Looper.getMainLooper()).post(new Runnable() {
 							@Override
 							public void run() {
-								eventSink.success(map);
+								try {
+									eventSink.success(map);
+								}catch (IllegalStateException e) {
+
+								}
 							}
 						});
 					}
@@ -295,7 +339,11 @@ public class SecverifyPlugin implements FlutterPlugin,MethodCallHandler, EventCh
 						new Handler(Looper.getMainLooper()).post(new Runnable() {
 							@Override
 							public void run() {
-								eventSink.success(map);
+								try {
+									eventSink.success(map);
+								}catch (IllegalStateException e) {
+
+								}
 							}
 						});
 					}
@@ -308,7 +356,11 @@ public class SecverifyPlugin implements FlutterPlugin,MethodCallHandler, EventCh
 						new Handler(Looper.getMainLooper()).post(new Runnable() {
 							@Override
 							public void run() {
-								eventSink.success(map);
+								try {
+									eventSink.success(map);
+								}catch (IllegalStateException e) {
+
+								}
 							}
 						});
 					}
@@ -361,7 +413,11 @@ public class SecverifyPlugin implements FlutterPlugin,MethodCallHandler, EventCh
 				new Handler(Looper.getMainLooper()).post(new Runnable() {
 					@Override
 					public void run() {
-						eventSink.success(map);
+						try {
+							eventSink.success(map);
+						}catch (IllegalStateException e) {
+
+						}
 					}
 				});
 
@@ -375,7 +431,11 @@ public class SecverifyPlugin implements FlutterPlugin,MethodCallHandler, EventCh
 				new Handler(Looper.getMainLooper()).post(new Runnable() {
 					@Override
 					public void run() {
-						eventSink.success(map);
+						try {
+							eventSink.success(map);
+						}catch (IllegalStateException e) {
+
+						}
 					}
 				});
 			}
@@ -396,7 +456,11 @@ public class SecverifyPlugin implements FlutterPlugin,MethodCallHandler, EventCh
 					public void run() {
 						final Map<String, Object> map2 = new HashMap<>();
 						map2.put("ret", map);
-						eventSink.success(map2);
+						try {
+							eventSink.success(map2);
+						}catch (IllegalStateException e) {
+
+						}
 					}
 				});
 			}
@@ -421,7 +485,12 @@ public class SecverifyPlugin implements FlutterPlugin,MethodCallHandler, EventCh
 				new Handler(Looper.getMainLooper()).post(new Runnable() {
 					@Override
 					public void run() {
-						eventSink.success(map);
+						try {
+							eventSink.success(map);
+						}catch (IllegalStateException e) {
+
+						}
+
 					}
 				});
 			}
@@ -430,7 +499,11 @@ public class SecverifyPlugin implements FlutterPlugin,MethodCallHandler, EventCh
 
 	private void getVersion(Result result) {
 		String version = SecVerify.getVersion();
-		result.success(version);
+		try {
+			result.success(version);
+		}catch (IllegalStateException e) {
+
+		}
 	}
 
 	private void onSuccess(final Result result, Map<String, Object> ret) {
@@ -440,7 +513,11 @@ public class SecverifyPlugin implements FlutterPlugin,MethodCallHandler, EventCh
 			@Override
 			public void run() {
 				//将封装好的数据通过result传会给flutter
-				result.success(map);
+				try {
+					result.success(map);
+				}catch (IllegalStateException e) {
+
+				}
 			}
 		});
 	}
@@ -465,7 +542,11 @@ public class SecverifyPlugin implements FlutterPlugin,MethodCallHandler, EventCh
 				}
 				//使用 “err” 包装一层
 				map.put("err", err);
-				eventSink.success(map);
+				try {
+					eventSink.success(map);
+				}catch (IllegalStateException e) {
+
+				}
 			}
 		});
 	}
@@ -490,7 +571,11 @@ public class SecverifyPlugin implements FlutterPlugin,MethodCallHandler, EventCh
 				}
 				//使用 “err” 包装一层
 				map.put("err", err);
-				result.success(map);
+				try {
+					result.success(map);
+				}catch (IllegalStateException e) {
+
+				}
 			}
 		});
 	}

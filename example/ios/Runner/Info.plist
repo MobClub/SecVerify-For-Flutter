@@ -47,8 +47,8 @@
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 	<key>mobappkey</key>
-	<string>2c574691c6986</string>
+	<string></string>
 	<key>mobappsecret</key>
-	<string>4b5cd595eb07b5cf17bb269f7a51391d</string>
+	<string></string>
 </dict>
 </plist>

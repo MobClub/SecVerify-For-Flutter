@@ -1,4 +1,4 @@
-package com.mob.secverifyplugin;
+package com.mob.flutter.secverify.impl;
 
 import android.content.Context;
 import android.graphics.Bitmap;

@@ -1,4 +1,4 @@
-package com.mob.secverifyplugin;
+package com.mob.flutter.secverify.impl;
 
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -30,8 +30,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
-import static com.mob.secverifyplugin.CommonUtil.createBitmap;
-import static com.mob.secverifyplugin.CommonUtil.dipToPx;
+import static com.mob.flutter.secverify.impl.CommonUtil.createBitmap;
+import static com.mob.flutter.secverify.impl.CommonUtil.dipToPx;
 import static com.mob.tools.utils.ResHelper.pxToDip;
 
 public class LandUiSettingsTransfer {
@@ -44,7 +44,6 @@ public class LandUiSettingsTransfer {
 		}
 		LandUiSettings.Builder builder = (LandUiSettings.Builder) parse(map);
 		return builder.build();
-
 	}
 
 	private static BaseEntity parse(HashMap options) {
@@ -198,7 +197,7 @@ public class LandUiSettingsTransfer {
 				try {
 					navReturnImgDrawablePath =  "flutter_assets" + File.separator + "assets" + File.separator +  navReturnImgDrawablePath;
 					InputStream is = MobSDK.getContext().getAssets().open(navReturnImgDrawablePath);
-					Drawable navReturnImageDrawable = createBitmap(is, dipToPx(MobSDK.getContext(), navReturnImgDrawableWidth), dipToPx(MobSDK.getContext(), navReturnImgDrawableHeight));
+					Drawable navReturnImageDrawable = CommonUtil.createBitmap(is, CommonUtil.dipToPx(MobSDK.getContext(), navReturnImgDrawableWidth), CommonUtil.dipToPx(MobSDK.getContext(), navReturnImgDrawableHeight));
 					builder.setNavCloseImgId(navReturnImageDrawable);
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -265,7 +264,7 @@ public class LandUiSettingsTransfer {
 					DisplayMetrics displayMetrics = MobSDK.getContext().getResources().getDisplayMetrics();
 					int width = displayMetrics.widthPixels;
 					int height = displayMetrics.heightPixels;
-					Drawable backgroundImgDrawable = createBitmap(is, width, height);
+					Drawable backgroundImgDrawable = CommonUtil.createBitmap(is, width, height);
 					builder.setBackgroundImgId(backgroundImgDrawable);
 				} catch (IOException e) {
 					Log.e(TAG, e.getMessage(), e);
@@ -339,7 +338,7 @@ public class LandUiSettingsTransfer {
 				try {
 					logoImgDrawablePath = "flutter_assets" + File.separator + "assets" + File.separator+ logoImgDrawablePath;
 					InputStream is = MobSDK.getContext().getAssets().open(logoImgDrawablePath);
-					Drawable logoImgDrawable = createBitmap(is, dipToPx(MobSDK.getContext(), logoWidth), dipToPx(MobSDK.getContext(), logoHeight));
+					Drawable logoImgDrawable = CommonUtil.createBitmap(is, CommonUtil.dipToPx(MobSDK.getContext(), logoWidth), CommonUtil.dipToPx(MobSDK.getContext(), logoHeight));
 					builder.setLogoImgId(logoImgDrawable);
 				} catch (IOException e) {
 					Log.e(TAG, e.getMessage(), e);
@@ -562,7 +561,7 @@ public class LandUiSettingsTransfer {
 				try {
 					checkboxCheckedImgPath = "flutter_assets" + File.separator + "assets" + File.separator+ checkboxCheckedImgPath;
 					InputStream is = MobSDK.getContext().getAssets().open(checkboxCheckedImgPath);
-					Drawable drawableStatePressed = createBitmap(is, dipToPx(MobSDK.getContext(), checkboxWidth), dipToPx(MobSDK.getContext(), checkboxHeight));
+					Drawable drawableStatePressed = CommonUtil.createBitmap(is, CommonUtil.dipToPx(MobSDK.getContext(), checkboxWidth), CommonUtil.dipToPx(MobSDK.getContext(), checkboxHeight));
 					drawable.addState(new int[]{android.R.attr.state_pressed}, drawableStatePressed);
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -575,7 +574,7 @@ public class LandUiSettingsTransfer {
 				try {
 					checkboxUncheckedImgPath = "flutter_assets" + File.separator + "assets" + File.separator+ checkboxUncheckedImgPath;
 					InputStream is = MobSDK.getContext().getAssets().open(checkboxUncheckedImgPath);
-					Drawable drawableStateUnPressed = createBitmap(is, dipToPx(MobSDK.getContext(), checkboxWidth), dipToPx(MobSDK.getContext(), checkboxHeight));
+					Drawable drawableStateUnPressed = CommonUtil.createBitmap(is, CommonUtil.dipToPx(MobSDK.getContext(), checkboxWidth), CommonUtil.dipToPx(MobSDK.getContext(), checkboxHeight));
 					drawable.addState(new int[]{}, drawableStateUnPressed);
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -612,7 +611,7 @@ public class LandUiSettingsTransfer {
 				checkboxImg = "flutter_assets" + File.separator + "assets" + File.separator + checkboxImg;
 				try {
 					InputStream is = MobSDK.getContext().getAssets().open(checkboxImg);
-					Drawable checkBoxImg = createBitmap(is, dipToPx(MobSDK.getContext(), checkboxWidth), dipToPx(MobSDK.getContext(), checkboxHeight));
+					Drawable checkBoxImg = CommonUtil.createBitmap(is, CommonUtil.dipToPx(MobSDK.getContext(), checkboxWidth), CommonUtil.dipToPx(MobSDK.getContext(), checkboxHeight));
 					builder.setCheckboxImgId(checkBoxImg);
 				} catch (IOException e) {
 					Log.e(TAG, e.getMessage(), e);
@@ -983,7 +982,7 @@ public class LandUiSettingsTransfer {
 				try {
 					navReturnImgDrawablePath =  "flutter_assets" + File.separator + "assets" + File.separator +  navReturnImgDrawablePath;
 					InputStream is = MobSDK.getContext().getAssets().open(navReturnImgDrawablePath);
-					Drawable navReturnImageDrawable = createBitmap(is, dipToPx(MobSDK.getContext(), navReturnImgDrawableWidth), dipToPx(MobSDK.getContext(), navReturnImgDrawableHeight));
+					Drawable navReturnImageDrawable = CommonUtil.createBitmap(is, CommonUtil.dipToPx(MobSDK.getContext(), navReturnImgDrawableWidth), CommonUtil.dipToPx(MobSDK.getContext(), navReturnImgDrawableHeight));
 					builder.setNavCloseImgId(navReturnImageDrawable);
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -1031,7 +1030,7 @@ public class LandUiSettingsTransfer {
 //			全屏宽度-60dp
 			DisplayMetrics metrics = MobSDK.getContext().getResources().getDisplayMetrics();
 			int screenWidth = metrics.widthPixels;
-			loginBtnWidth = pxToDip(MobSDK.getContext(), screenWidth - dipToPx(MobSDK.getContext(), 60));
+			loginBtnWidth = pxToDip(MobSDK.getContext(), screenWidth - CommonUtil.dipToPx(MobSDK.getContext(), 60));
 		}
 		////如果没有设置，那么设置一个默认值用于设置图片的高度
 		if (loginBtnHeight > 0) {
@@ -1065,7 +1064,7 @@ public class LandUiSettingsTransfer {
 				try {
 					loginImgPressed = "flutter_assets" + File.separator + "assets" + File.separator+ loginImgPressed;
 					InputStream is = MobSDK.getContext().getAssets().open(loginImgPressed);
-					Drawable drawableStatePressed = createBitmap(is, dipToPx(MobSDK.getContext(), loginBtnWidth), dipToPx(MobSDK.getContext(), loginBtnHeight));
+					Drawable drawableStatePressed = CommonUtil.createBitmap(is, CommonUtil.dipToPx(MobSDK.getContext(), loginBtnWidth), dipToPx(MobSDK.getContext(), loginBtnHeight));
 					drawable.addState(new int[]{android.R.attr.state_pressed}, drawableStatePressed);
 				} catch (IOException e) {
 					e.printStackTrace();
