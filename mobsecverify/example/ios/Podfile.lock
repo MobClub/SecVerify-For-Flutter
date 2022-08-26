@@ -1,0 +1,39 @@
+PODS:
+  - Flutter (1.0.0)
+  - mob_secverify (3.1.6):
+    - MOBFoundation
+  - MOBFoundation (3.2.36)
+  - package_info_plus (0.4.5):
+    - Flutter
+  - secverify_plugin (1.0.0):
+    - Flutter
+    - mob_secverify
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
+  - secverify_plugin (from `.symlinks/plugins/secverify_plugin/ios`)
+
+SPEC REPOS:
+  trunk:
+    - mob_secverify
+    - MOBFoundation
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  package_info_plus:
+    :path: ".symlinks/plugins/package_info_plus/ios"
+  secverify_plugin:
+    :path: ".symlinks/plugins/secverify_plugin/ios"
+
+SPEC CHECKSUMS:
+  Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
+  mob_secverify: 73281f70cce0164615b941f6d6e9da72ba715ba2
+  MOBFoundation: 78ad4264f436b3d147375ab7fdb8088b9e22ca5d
+  package_info_plus: 6c92f08e1f853dc01228d6f553146438dafcd14e
+  secverify_plugin: a885a135c205dfd2aac8c1632cfa45defadab4a2
+
+PODFILE CHECKSUM: 8e679eca47255a8ca8067c4c67aab20e64cb974d
+
+COCOAPODS: 1.11.2
