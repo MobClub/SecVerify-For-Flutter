@@ -15,7 +15,7 @@ secverify for flutter.
   s.source_files = 'Classes/**/*'
   s.public_header_files = 'Classes/**/*.h'
   s.dependency 'Flutter'
-  s.dependency 'mob_secverify'
+  s.dependency 'mob_secverify_spec2'
   s.static_framework = true
   s.ios.deployment_target = '9.0'
 end

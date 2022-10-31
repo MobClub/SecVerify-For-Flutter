@@ -16,3 +16,6 @@
 
 ##1.30.8
 *Fix Android custom UI not work
+
+##1.30.9
+*Performance optimization
