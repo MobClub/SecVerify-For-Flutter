@@ -5,7 +5,7 @@
 **支持的原生SDK版本**
 
 - [Android](https://github.com/MobClub/SecVerify-for-Android) - V2.1.0
-- [iOS](https://github.com/MobClub/SecVerify-for-iOS) - V2.1.2
+- [iOS](https://github.com/MobClub/SecVerify-for-iOS) - V3.1.6
 
 **简介：** http://www.mob.com/product/secverify
 

@@ -1210,7 +1210,7 @@ public class UiSettingsTransfer {
 						String viewTextColor = (String) customView.get("viewTextColor");
 						if (!TextUtils.isEmpty(viewTextColor)) {
 							int viewTextColorId = ResHelper.getColorRes(MobSDK.getContext(),viewTextColor);
-							textView.setTextColor(viewTextColorId);
+							textView.setTextColor(MobSDK.getContext().getResources().getColor(viewTextColorId));
 						}
 					}
 					if (customView.containsKey("viewTextFont")) {
