@@ -1,6 +1,6 @@
 name: secverify_plugin
 description: The operator gateway takes the number and verifies the mobile phone number in one second.
-version: 1.30.10
+version: 1.30.12
 homepage: https://www.mob.com/mobService/secverify
 
 environment:

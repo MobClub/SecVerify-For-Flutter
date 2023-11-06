@@ -22,3 +22,9 @@
 
 ## 1.30.10
 *Performance optimization
+
+## 1.30.11
+*Add click event of custom uis
+
+## 1.30.12
+*Fix anr

@@ -3,7 +3,7 @@ package com.mob.flutter.secverify;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.mob.MobSDK;
@@ -21,12 +21,11 @@ import com.mob.secverify.ui.component.CommonProgressDialog;
 import com.mob.tools.utils.DeviceHelper;
 import com.mob.flutter.secverify.impl.LandUiSettingsTransfer;
 import com.mob.flutter.secverify.impl.UiSettingsTransfer;
-
+import com.mob.secverify.CustomViewClickListener;
+import android.view.View;
 import java.util.HashMap;
 import java.util.Map;
 import java.lang.IllegalStateException;
-
-
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.EventChannel;
@@ -48,10 +47,23 @@ public class SecverifyPlugin implements FlutterPlugin,MethodCallHandler, EventCh
 	private EventChannel.EventSink eventSink;
 
 	public SecverifyPlugin(){
-		MobSDK.setChannel(new SECVERIFY(), MobSDK.CHANNEL_FLUTTER);
+		setMobChannel();
 	}
 
-
+	/**
+	 * 设置跨平台插件渠道
+	 */
+	private void setMobChannel() {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					MobSDK.setChannel(new SECVERIFY(), MobSDK.CHANNEL_FLUTTER);
+				} catch (Throwable e) {
+				}
+			}
+		}).start();
+	}
 	/**
 	 * Plugin registration.
 	 */
@@ -123,6 +135,9 @@ public class SecverifyPlugin implements FlutterPlugin,MethodCallHandler, EventCh
 			case "hideLoading":
 				CommonProgressDialog.dismissProgressDialog();
 				break;
+			case "toast":
+				toast(call, result);
+				break;
 			default:
 				break;
 		}
@@ -175,14 +190,47 @@ public class SecverifyPlugin implements FlutterPlugin,MethodCallHandler, EventCh
 
 		if (call.hasArgument("androidPortraitConfig")) {
 			HashMap map = call.argument("androidPortraitConfig");
-			UiSettings uiSettings = UiSettingsTransfer.transferUiSettings(map);
+			UiSettings uiSettings = UiSettingsTransfer.transferUiSettings(map, new CustomViewClickListener(){
+				@Override
+				public void onClick(View view) {
+					System.out.println("SecverifyPlugin "+view.getTag());
+					final Map<String, Object> map = new HashMap<String, Object>();
+					map.put("customViewClick", view.getTag());
+					new Handler(Looper.getMainLooper()).post(new Runnable() {
+						@Override
+						public void run() {
+							try {
+								eventSink.success(map);
+							}catch (IllegalStateException e) {
+
+							}
+						}
+					});
+				}
+			});
 			SecVerify.setUiSettings(uiSettings);
 		}
 	}
 	private void setLandUiSettings(MethodCall call, Result result) {
 		if (call.hasArgument("androidLandscapeConfig")) {
 			HashMap map = call.argument("androidLandscapeConfig");
-			LandUiSettings uiSettings = LandUiSettingsTransfer.transferLandUiSettings(map);
+			LandUiSettings uiSettings = LandUiSettingsTransfer.transferLandUiSettings(map, new CustomViewClickListener(){
+				@Override
+				public void onClick(View view) {
+					final Map<String, Object> map = new HashMap<String, Object>();
+					map.put("customViewClick", view.getTag());
+					new Handler(Looper.getMainLooper()).post(new Runnable() {
+						@Override
+						public void run() {
+							try {
+								eventSink.success(map);
+							}catch (IllegalStateException e) {
+
+							}
+						}
+					});
+				}
+			});
 			SecVerify.setLandUiSettings(uiSettings);
 		}
 	}
@@ -580,6 +628,22 @@ public class SecverifyPlugin implements FlutterPlugin,MethodCallHandler, EventCh
 		});
 	}
 
+	private void toast(MethodCall call, final Result result){
+		if (call.hasArgument("content")) {
+			final String content = call.argument("content");
+			new Handler(Looper.getMainLooper()).post(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						Toast.makeText(MobSDK.getContext(), content, Toast.LENGTH_SHORT).show();
+					}catch (IllegalStateException e) {
+
+					}
+				}
+			});
+		}
+	}
+
 	@Override
 	public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
 		onAttachedToEngine(binding.getApplicationContext(),binding.getBinaryMessenger());
@@ -602,6 +666,7 @@ public class SecverifyPlugin implements FlutterPlugin,MethodCallHandler, EventCh
 	@Override
 	public void onListen(Object arguments, EventChannel.EventSink events) {
 		eventSink = events;
+		System.out.println("onListen");
 	}
 
 

@@ -51,4 +51,6 @@ class SecVerifySDKMethods {
       SecVerifySDKMethod(name: 'finishOAuthPage', id: 16);
   static final SecVerifySDKMethod autoFinishOAuthPage =
       SecVerifySDKMethod(name: 'autoFinishOAuthPage', id: 17);
+  static final SecVerifySDKMethod toast =
+      SecVerifySDKMethod(name: 'toast', id: 18);
 }

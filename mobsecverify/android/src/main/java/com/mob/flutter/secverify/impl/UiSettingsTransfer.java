@@ -36,16 +36,16 @@ public class UiSettingsTransfer {
 	public static final String TAG = "Transfer";
 
 
-	public static UiSettings transferUiSettings(HashMap map) {
+	public static UiSettings transferUiSettings(HashMap map, CustomViewClickListener customViewClickListener) {
 		if (map == null || map.isEmpty()) {
 			return null;
 		}
-		UiSettings.Builder builder = (UiSettings.Builder) parse(map);
+		UiSettings.Builder builder = (UiSettings.Builder) parse(map, customViewClickListener);
 		return builder.build();
 
 	}
 
-	private static BaseEntity parse(HashMap options) {
+	private static BaseEntity parse(HashMap options, CustomViewClickListener customViewClickListener) {
 		UiSettings.Builder builder = new UiSettings.Builder();
 		if(options==null){
 			return builder;
@@ -1146,7 +1146,7 @@ public class UiSettingsTransfer {
 		}
 		if (options.containsKey("customView")) {
 			HashMap customView = (HashMap) options.get("customView");
-			setCustomView(customView);
+			setCustomView(customView, customViewClickListener);
 		}
 
 		return builder;
@@ -1157,7 +1157,7 @@ public class UiSettingsTransfer {
 	 * 注意当同时设置了横屏和竖屏的属性时，会导致view被横屏的UI属性覆盖
 	 * @param customView
 	 */
-	private static void setCustomView(HashMap customView) {
+	private static void setCustomView(HashMap customView, final CustomViewClickListener customViewClickListener) {
 
 		if (customView == null) {
 			return;
@@ -1165,7 +1165,7 @@ public class UiSettingsTransfer {
 		if (!customView.containsKey("customView")) {
 			return;
 		}
-		List<View> views = new ArrayList<>();
+		final List<View> views = new ArrayList<>();
 		ArrayList MobSDKCustomViews = (ArrayList) customView.get("customView");
 		if (MobSDKCustomViews.size() <= 0) {
 			return;
@@ -1185,6 +1185,10 @@ public class UiSettingsTransfer {
 			CustomUIRegister.addCustomizedUi(views, new CustomViewClickListener() {
 				@Override
 				public void onClick(View view) {
+					System.out.println("CustomViewClickListener "+view.getTag());
+					if(customViewClickListener != null){
+						customViewClickListener.onClick(view);
+					}
 				}
 			});
 		}
@@ -1200,6 +1204,11 @@ public class UiSettingsTransfer {
 			if (!TextUtils.isEmpty(ViewClass)) {
 				if ("TextView".equalsIgnoreCase(ViewClass)) {
 					textView = new TextView(MobSDK.getContext());
+					System.out.println("customView "+customView);
+					if(customView.containsKey("viewTag")){
+						String tag = (String) customView.get("viewTag");
+						textView.setTag(tag);
+					}
 					if (customView.containsKey("viewText")) {
 						String viewText = (String) customView.get("viewText");
 						if (!TextUtils.isEmpty(viewText)) {
@@ -1300,6 +1309,10 @@ public class UiSettingsTransfer {
 					int viewOffsetBottomY = -1;
 					int viewWidth = -1;
 					int viewHeight = -1;
+					if(customView.containsKey("viewTag")){
+						String tag = (String) customView.get("viewTag");
+						imageView.setTag(tag);
+					}
 					if (customView.containsKey("viewOffsetX")) {
 						viewOffsetX = (int) customView.get("viewOffsetX");
 					}

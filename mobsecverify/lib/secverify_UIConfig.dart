@@ -817,6 +817,7 @@ class AndroidCustomDialog {
 
 // @JsonSerializable(explicitToJson: true, includeIfNull: false)
 class AndroidCustomView {
+  String? viewTag;
   String? viewClass;
   String? viewText;
   String? viewTextColor;

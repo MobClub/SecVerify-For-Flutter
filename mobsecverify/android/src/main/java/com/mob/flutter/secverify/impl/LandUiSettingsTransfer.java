@@ -38,15 +38,15 @@ public class LandUiSettingsTransfer {
 	public static final String TAG = "Transfer";
 
 
-	public static LandUiSettings transferLandUiSettings(HashMap map) {
+	public static LandUiSettings transferLandUiSettings(HashMap map, CustomViewClickListener customViewClickListener) {
 		if (map == null || map.isEmpty()) {
 			return null;
 		}
-		LandUiSettings.Builder builder = (LandUiSettings.Builder) parse(map);
+		LandUiSettings.Builder builder = (LandUiSettings.Builder) parse(map, customViewClickListener);
 		return builder.build();
 	}
 
-	private static BaseEntity parse(HashMap options) {
+	private static BaseEntity parse(HashMap options, CustomViewClickListener customViewClickListener) {
 		LandUiSettings.Builder builder = new LandUiSettings.Builder();
 		/**导航栏*/
 		if (options.containsKey("customNav")) {
@@ -106,7 +106,7 @@ public class LandUiSettingsTransfer {
 		}
 		if (options.containsKey("customView")) {
 			HashMap customView = (HashMap) options.get("customView");
-			setCustomView(customView);
+			setCustomView(customView, customViewClickListener);
 			Log.e(TAG, "setCustomViewDone");
 		}
 
@@ -1339,7 +1339,7 @@ public class LandUiSettingsTransfer {
 	 * 注意当同时设置了横屏和竖屏的属性时，会导致view被横屏的UI属性覆盖
 	 * @param customView
 	 */
-	private static void setCustomView(HashMap customView) {
+	private static void setCustomView(HashMap customView, final CustomViewClickListener customViewClickListener) {
 
 		if (customView == null) {
 			return;
@@ -1367,7 +1367,9 @@ public class LandUiSettingsTransfer {
 			CustomUIRegister.addCustomizedUi(views, new CustomViewClickListener() {
 				@Override
 				public void onClick(View view) {
-					Log.e(TAG, "CustomViewClick are not avliable");
+					if(customViewClickListener != null){
+						customViewClickListener.onClick(view);
+					}
 				}
 			});
 		}
@@ -1384,6 +1386,10 @@ public class LandUiSettingsTransfer {
 				if ("TextView".equalsIgnoreCase(ViewClass)) {
 					Log.e(TAG, "Current is TextView");
 					textView = new TextView(MobSDK.getContext());
+					if(customView.containsKey("viewTag")){
+						String tag = (String) customView.get("viewTag");
+						textView.setTag(tag);
+					}
 					if (customView.containsKey("viewText")) {
 						String viewText = (String) customView.get("viewText");
 						Log.e(TAG, "Current is viewText: "+viewText);
@@ -1486,6 +1492,10 @@ public class LandUiSettingsTransfer {
 					int viewOffsetBottomY = -1;
 					int viewWidth = -1;
 					int viewHeight = -1;
+					if(customView.containsKey("viewTag")){
+						String tag = (String) customView.get("viewTag");
+						imageView.setTag(tag);
+					}
 					if (customView.containsKey("viewOffsetX")) {
 						viewOffsetX = (int) customView.get("viewOffsetX");
 					}

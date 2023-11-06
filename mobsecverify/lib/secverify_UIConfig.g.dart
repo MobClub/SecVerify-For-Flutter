@@ -1585,6 +1585,7 @@ Map<String, dynamic> _$AndroidCustomDialogToJson(AndroidCustomDialog instance) {
 
 AndroidCustomView _$AndroidCustomViewFromJson(Map<String, dynamic> json) =>
     AndroidCustomView()
+      ..viewClass = json['viewTag'] as String?
       ..viewClass = json['viewClass'] as String?
       ..viewText = json['viewText'] as String?
       ..viewTextColor = json['viewTextColor'] as String?
@@ -1610,7 +1611,7 @@ Map<String, dynamic> _$AndroidCustomViewToJson(AndroidCustomView instance) {
       val[key] = value;
     }
   }
-
+  writeNotNull('viewTag', instance.viewTag);
   writeNotNull('viewClass', instance.viewClass);
   writeNotNull('viewText', instance.viewText);
   writeNotNull('viewTextColor', instance.viewTextColor);

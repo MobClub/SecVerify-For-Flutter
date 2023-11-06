@@ -215,8 +215,11 @@ class _HomeState extends State<Home> {
               }
             },
             (rt, err) {
-              // 自定义控件点击事件结果回调
-              print("自定义控件点击事件结果回调:" + rt.toString() + err.toString());
+              if (rt != null && err == null) {
+                // 自定义控件点击事件结果回调
+                print("自定义控件点击事件结果回调:" + rt.toString() + err.toString());
+                Secverify.toast("点击"+rt.toString());
+              }
             },
             (rt, err) {
               if (rt != null && err == null) {
@@ -440,8 +443,9 @@ class _HomeState extends State<Home> {
 //自定义控件 新增一个textview
 
     AndroidCustomView customView = new AndroidCustomView();
+    customView.viewTag = '自定义控件1';
     customView.viewClass='TextView';
-    customView.viewText='自定义控件';
+    customView.viewText='自定义控件1';
     customView.viewTextFont=15;
     customView.viewTextBold=false;
     customView.viewAlignParentRight=false;

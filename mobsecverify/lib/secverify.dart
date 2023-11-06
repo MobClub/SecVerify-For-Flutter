@@ -154,11 +154,21 @@ class Secverify {
           SecVerifySDKMethods.setAndroidPortraitLayout.name, params);
       callBack = _channel.invokeMethod(SecVerifySDKMethods.verify.name);
       _channelReceiver.receiveBroadcastStream().listen((event) {
-        if (androidEventListener != null && event != null && event is Map) {
+        if( event != null && event is Map){
           if (event['ret'] != null) {
-            androidEventListener(event, null);
+            if(androidEventListener != null) {
+              androidEventListener(event, null);
+            }
           } else if (event['err'] != null) {
-            androidEventListener(null, event);
+            if(androidEventListener != null) {
+              androidEventListener(null, event);
+            }
+          }
+          if (event['customViewClick'] != null){
+            if(customEventListener != null) {
+              //value为点击的控件tag
+              customEventListener(event, null);
+            }
           }
         }
       });
@@ -237,6 +247,11 @@ class Secverify {
 
   static Future<dynamic> manualDismissLoading() {
     return _channel.invokeMethod(SecVerifySDKMethods.hideLoading.name);
+  }
+
+  static Future<dynamic> toast(String content) {
+    final Map<String, String> args = {'content': content};
+    return _channel.invokeMethod(SecVerifySDKMethods.toast.name, args);
   }
 
   static void addListener(SecVerifyResultListener result) {
